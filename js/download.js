@@ -1,4 +1,4 @@
-/* Download helpers: HTML file, PDF, PNG pick-mode */
+/* Download helpers: HTML file, PDF, PNG range capture */
 
 function downloadHTMLChunk(html, index) {
   var full = [
@@ -25,7 +25,6 @@ function downloadHTMLChunk(html, index) {
 }
 
 function printPDF(chunkIndex) {
-  // chunkIndex: -1 = all, N = specific chunk (0-based)
   var chunks = document.querySelectorAll('.chunk');
   var previewsOpened = [];
 
@@ -34,46 +33,45 @@ function printPDF(chunkIndex) {
       ch.classList.add('print-hidden');
       return;
     }
-    // Ensure preview is visible and filled
     var prev = ch.querySelector('.preview');
     if (prev && prev.style.display !== 'block') {
       prev.style.display = 'block';
-      if (!prev.innerHTML.trim() && prev._finalHTML) {
-        prev.innerHTML = prev._finalHTML;
-      }
+      if (!prev.innerHTML.trim() && prev._finalHTML) prev.innerHTML = prev._finalHTML;
       previewsOpened.push(prev);
     }
   });
 
   window.print();
 
-  // Restore state after print dialog closes
   chunks.forEach(function (ch) { ch.classList.remove('print-hidden'); });
   previewsOpened.forEach(function (prev) { prev.style.display = 'none'; });
 }
 
-// ─── PNG Pick Mode ────────────────────────────────
+/* ─── PNG range capture (click start → click end) ───────────── */
 
-var _pickState = {
+var _pick = {
   active: false,
-  cleanup: null,
-  btn: null,  // tracks which button is currently in pick mode
+  start: null,
+  logEl: null,
+  previewEl: null,
+  chunkIndex: 0,
+  btn: null,
+  handler: null,
 };
 
 function togglePickMode(previewEl, chunkIndex, btn) {
-  if (_pickState.active) {
-    var wasOwnBtn = (_pickState.btn === btn);
-    _deactivatePickMode();
-    if (wasOwnBtn) return;  // same button → just deactivate
-    // different chunk's button → deactivate old, activate new
+  if (_pick.active) {
+    var same = (_pick.btn === btn);
+    _exitPick();
+    if (same) return; // toggling the same chunk's button off
   }
 
   if (typeof html2canvas === 'undefined') {
-    alert('html2canvas 라이브러리를 불러오지 못했습니다. 네트워크 연결을 확인해 주세요.');
+    alert('이미지 변환 라이브러리(html2canvas)를 불러오지 못했습니다. 네트워크 연결을 확인해 주세요.');
     return;
   }
 
-  // Open preview if closed
+  // Ensure preview open
   if (previewEl.style.display !== 'block') {
     previewEl.style.display = 'block';
     if (!previewEl.innerHTML.trim() && previewEl._finalHTML) {
@@ -81,58 +79,118 @@ function togglePickMode(previewEl, chunkIndex, btn) {
     }
   }
 
-  _activatePickMode(previewEl, chunkIndex, btn);
+  var logEl = previewEl.querySelector('.r20-log') || previewEl;
+  _enterPick(previewEl, logEl, chunkIndex, btn);
 }
 
-function _activatePickMode(previewEl, chunkIndex, btn) {
-  _pickState.active = true;
-  btn.textContent = '선택 중... (클릭으로 캡처 / 다시 누르면 종료)';
+function _enterPick(previewEl, logEl, chunkIndex, btn) {
+  _pick.active = true;
+  _pick.start = null;
+  _pick.logEl = logEl;
+  _pick.previewEl = previewEl;
+  _pick.chunkIndex = chunkIndex;
+  _pick.btn = btn;
+
+  btn.textContent = '① 시작 메시지를 클릭';
   btn.classList.add('danger');
+  previewEl.closest('.chunk-bd').classList.add('pick-mode-active');
 
-  var chunkBd = previewEl.closest('.chunk-bd');
-  if (chunkBd) chunkBd.classList.add('pick-mode-active');
-
-  var handler = function (e) {
+  _pick.handler = function (e) {
+    var turn = e.target.closest ? e.target.closest('.r20-turn') : null;
+    if (!turn || !logEl.contains(turn)) return;
     e.preventDefault();
     e.stopPropagation();
 
-    var target = e.target;
-    btn.textContent = '캡처 중...';
-
-    html2canvas(target, { useCORS: true, scale: 2, logging: false })
-      .then(function (canvas) {
-        var url = canvas.toDataURL('image/png');
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'r20-pick-' + chunkIndex + '-' + Date.now() + '.png';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        btn.textContent = '선택 중... (클릭으로 캡처 / 다시 누르면 종료)';
-      })
-      .catch(function (err) {
-        alert('캡처 실패: ' + err.message);
-        btn.textContent = '선택 중... (클릭으로 캡처 / 다시 누르면 종료)';
+    if (!_pick.start) {
+      _pick.start = turn;
+      _highlight(turn, true);
+      btn.textContent = '② 끝 메시지를 클릭';
+    } else {
+      _highlight(turn, true);
+      var start = _pick.start;
+      var end = turn;
+      btn.textContent = '캡처 중...';
+      _captureRange(logEl, start, end, chunkIndex, function () {
+        _exitPick();
       });
+    }
   };
 
-  previewEl.addEventListener('click', handler, true);
-
-  _pickState.btn = btn;
-  _pickState.cleanup = function () {
-    previewEl.removeEventListener('click', handler, true);
-    if (chunkBd) chunkBd.classList.remove('pick-mode-active');
-    _pickState.active = false;
-    _pickState.btn = null;
-    _pickState.cleanup = null;
-  };
+  previewEl.addEventListener('click', _pick.handler, true);
 }
 
-function _deactivatePickMode() {
-  var prevBtn = _pickState.btn;
-  if (_pickState.cleanup) _pickState.cleanup();
-  if (prevBtn) {
-    prevBtn.textContent = 'PNG 선택 캡처';
-    prevBtn.classList.remove('danger');
+function _highlight(turn, on) {
+  turn.style.outline = on ? '2px solid #4f46e5' : '';
+  turn.style.outlineOffset = on ? '2px' : '';
+}
+
+function _clearHighlights(logEl) {
+  if (!logEl) return;
+  logEl.querySelectorAll('.r20-turn').forEach(function (t) {
+    t.style.outline = '';
+    t.style.outlineOffset = '';
+  });
+}
+
+function _exitPick() {
+  if (_pick.previewEl && _pick.handler) {
+    _pick.previewEl.removeEventListener('click', _pick.handler, true);
+    var bd = _pick.previewEl.closest('.chunk-bd');
+    if (bd) bd.classList.remove('pick-mode-active');
   }
+  _clearHighlights(_pick.logEl);
+  if (_pick.btn) {
+    _pick.btn.textContent = 'PNG 선택 캡처';
+    _pick.btn.classList.remove('danger');
+  }
+  _pick.active = false;
+  _pick.start = null;
+  _pick.logEl = null;
+  _pick.previewEl = null;
+  _pick.btn = null;
+  _pick.handler = null;
+}
+
+function _captureRange(logEl, startTurn, endTurn, chunkIndex, done) {
+  var turns = Array.prototype.slice.call(logEl.querySelectorAll('.r20-turn'));
+  var i = turns.indexOf(startTurn);
+  var j = turns.indexOf(endTurn);
+  if (i < 0 || j < 0) { done(); return; }
+  if (i > j) { var tmp = i; i = j; j = tmp; }
+
+  // Build an offscreen clone with the same classes/vars so CSS applies
+  var temp = document.createElement('div');
+  temp.className = logEl.className;
+  temp.setAttribute('style', logEl.getAttribute('style') || '');
+  temp.style.position = 'fixed';
+  temp.style.left = '-99999px';
+  temp.style.top = '0';
+  temp.style.width = logEl.offsetWidth + 'px';
+
+  for (var k = i; k <= j; k++) {
+    var clone = turns[k].cloneNode(true);
+    clone.style.outline = '';
+    clone.style.outlineOffset = '';
+    temp.appendChild(clone);
+  }
+  document.body.appendChild(temp);
+
+  var bg = getComputedStyle(logEl).backgroundColor;
+
+  html2canvas(temp, { useCORS: true, scale: 2, backgroundColor: bg, logging: false })
+    .then(function (canvas) {
+      var a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = 'r20-' + chunkIndex + '-' + Date.now() + '.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    })
+    .catch(function (err) {
+      alert('캡처 실패: ' + (err && err.message ? err.message : err));
+    })
+    .then(function () {
+      if (temp.parentNode) temp.parentNode.removeChild(temp);
+      done();
+    });
 }

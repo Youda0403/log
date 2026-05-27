@@ -11,24 +11,11 @@ window.addEventListener('DOMContentLoaded', function () {
     printPDF(-1);
   });
 
-  // Single-mode toggle: disable chunkSize when checked
   document.getElementById('singleMode').addEventListener('change', function (e) {
     var chunkInput = document.getElementById('chunkSize');
     var chunkLabel = document.getElementById('chunkSizeLabel');
     chunkInput.disabled = e.target.checked;
     chunkLabel.style.opacity = e.target.checked ? '0.4' : '1';
-  });
-
-  // removeAllBg and removeBlueBg are mutually exclusive (all-bg supersedes)
-  document.getElementById('removeAllBg').addEventListener('change', function (e) {
-    if (e.target.checked) {
-      document.getElementById('removeBlueBg').checked = false;
-    }
-  });
-  document.getElementById('removeBlueBg').addEventListener('change', function (e) {
-    if (e.target.checked) {
-      document.getElementById('removeAllBg').checked = false;
-    }
   });
 
   initDesignPanel();
@@ -50,37 +37,36 @@ function doConvert() {
   var scale = Math.max(50, Math.min(150, parseInt(document.getElementById('scale').value || '100', 10)));
   var chunkSize = Math.max(20000, Math.min(200000, parseInt(document.getElementById('chunkSize').value || '60000', 10)));
   var singleMode = document.getElementById('singleMode').checked;
-  var removeBlueBg = document.getElementById('removeBlueBg').checked;
-  var removeAllBg = document.getElementById('removeAllBg').checked;
 
-  // Clone pad content
   var wrapper = document.createElement('div');
   wrapper.innerHTML = pad.innerHTML;
 
-  // Process DOM (bugs fixed + new features)
-  processDOM(wrapper, { scale: scale, removeBlueBg: removeBlueBg, removeAllBg: removeAllBg });
+  var turns = parseRoll20Log(wrapper);
 
-  // Build output HTML with theme wrapper
-  var outputHTML = buildOutputHTML(wrapper.innerHTML);
+  if (!turns.length) {
+    alert('변환할 메시지를 찾지 못했어요.\nRoll20 채팅 로그를 그대로 붙여넣었는지 확인해 주세요.');
+    return;
+  }
 
-  // Split or single
-  var parts = singleMode ? [outputHTML] : splitHTML(outputHTML, chunkSize);
+  var parts = singleMode
+    ? [buildOutputHTML(turns, scale)]
+    : splitForChunks(turns, chunkSize, scale);
   var total = parts.length;
 
   parts.forEach(function (frag, idx) {
     chunksBox.appendChild(makeChunkCard(frag, idx, total));
   });
 
-  noteEl.textContent = '총 ' + total + '개로 분할했어요.' +
+  var msgCount = turns.reduce(function (n, t) { return n + t.lines.length; }, 0);
+  noteEl.textContent = '메시지 ' + msgCount + '줄을 ' + total + '개 덩어리로 변환했어요.' +
     (singleMode ? ' (통짜 모드)' : '') +
-    ' 티스토리 글에 순서대로 연속 붙여넣으세요.';
+    ' 티스토리 HTML 모드에 순서대로 붙여넣으세요.';
 }
 
 function makeChunkCard(frag, idx, total) {
   var section = document.createElement('section');
   section.className = 'chunk';
 
-  // Header
   var header = document.createElement('div');
   header.className = 'chunk-hd';
 
@@ -107,21 +93,17 @@ function makeChunkCard(frag, idx, total) {
   header.appendChild(tools);
   section.appendChild(header);
 
-  // Body
   var body = document.createElement('div');
   body.className = 'chunk-bd';
 
   var prev = document.createElement('div');
   prev.className = 'preview';
-  prev.style.display = 'none'; // explicit init — fixes the "2-click" bug
-  prev._finalHTML = frag;      // stored for pick mode & PDF fill
+  prev.style.display = 'none';
+  prev._finalHTML = frag;
 
   body.appendChild(prev);
   section.appendChild(body);
 
-  // ── Button handlers ─────────────────────────────
-
-  // Bug fix: compare against 'block' so first click always opens
   btnPreview.addEventListener('click', function () {
     if (prev.style.display === 'block') {
       prev.style.display = 'none';

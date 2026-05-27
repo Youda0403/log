@@ -4,43 +4,27 @@
 
   window.THEMES['clean'] = {
     name: '깔끔 버전',
-    desc: '심플하고 모던한 미니멀 레이아웃',
-    preview: '<span style="font-weight:600;font-size:11px;color:#6b7280;text-transform:uppercase">PLAYER NAME</span><br>메시지 내용이 여기에...<br><span style="color:#9ca3af;font-size:11px">─────────────</span>',
+    desc: '미니멀 (작은 이름표 + 구분선)',
+    themeClass: 'r20-theme-clean',
+    preview:
+      '<div style="padding:4px">' +
+      '<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9aa0a8">오틸리</div>' +
+      '여보세요?<div style="border-bottom:1px solid #eef0f2;margin:5px 0"></div>' +
+      '<span style="color:#7b818a">나레이션 텍스트</span></div>',
     defaults: {
-      bgColor: '#ffffff',
-      textColor: '#1a1a1a',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      lineHeight: '1.7',
-      fontSize: '15',
+      bg: '#ffffff',
+      fg: '#23272f',
+      font: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif",
+      lh: '1.75',
+      fs: '15',
     },
     css: [
-      `.r20-log{max-width:760px;width:100%;margin:0 auto;font-family:system-ui,-apple-system,sans-serif;`,
-      `background:#fff;line-height:1.7;font-size:15px;color:#1a1a1a;word-break:break-word;overflow-wrap:anywhere;}`,
-      `.r20-log .message{padding:6px 0;border-bottom:1px solid #f3f4f6;}`,
-      `.r20-log .by,.r20-log .message-name{font-weight:600;font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;}`,
-      `.r20-log .emote{color:#6b7280;}`,
-      `.r20-log img[class*="avatar"],.r20-log img[class*="token"]{width:28px!important;height:28px!important;border-radius:50%;vertical-align:middle;}`,
+      '.r20-theme-clean.r20-log{max-width:720px}',
+      '.r20-theme-clean .r20-avatar-wrap{display:none}',
+      '.r20-theme-clean .r20-turn{padding:13px 0;border-bottom:1px solid #eef0f2}',
+      '.r20-theme-clean .r20-turn:last-child{border-bottom:none}',
+      '.r20-theme-clean .r20-speaker{font-size:.72em;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9aa0a8;margin-bottom:5px}',
+      '.r20-theme-clean .r20-narration .r20-line{color:#7b818a}',
     ].join(''),
-    applyDOM(wrapper, overrides) {
-      const o = Object.assign({}, this.defaults, overrides);
-      wrapper.style.backgroundColor = o.bgColor;
-      wrapper.style.color = o.textColor;
-      wrapper.style.fontFamily = o.fontFamily;
-      wrapper.style.lineHeight = o.lineHeight;
-      wrapper.style.fontSize = o.fontSize + 'px';
-      wrapper.style.maxWidth = '760px';
-      wrapper.style.width = '100%';
-      wrapper.style.margin = '0 auto';
-      wrapper.style.wordBreak = 'break-word';
-      wrapper.style.overflowWrap = 'anywhere';
-
-      wrapper.querySelectorAll('.by, .message-name, [class*="username"]').forEach(function (el) {
-        el.style.fontWeight = '600';
-        el.style.fontSize = '12px';
-        el.style.color = '#6b7280';
-        el.style.textTransform = 'uppercase';
-        el.style.letterSpacing = '0.05em';
-      });
-    },
   };
 })();

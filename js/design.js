@@ -1,21 +1,30 @@
-/* Design Panel & Theme System */
+/* Design Panel & Theme System (CSS-variable driven) */
 var currentThemeKey = 'r20-original';
-var themeOverrides = {};
+var themeOverrides = {}; // keys: bg, fg, font, lh, fs
 
 function getActiveTheme() {
   return (window.THEMES && window.THEMES[currentThemeKey]) || window.THEMES['r20-original'];
 }
 
-function getThemeCSS() {
-  var theme = getActiveTheme();
-  return theme.css || '';
+function getThemeClass() {
+  return getActiveTheme().themeClass;
 }
 
-function applyThemeToWrapper(wrapper) {
-  var theme = getActiveTheme();
-  if (theme && theme.applyDOM) {
-    theme.applyDOM(wrapper, themeOverrides);
-  }
+function buildStyleBlock() {
+  var t = getActiveTheme();
+  return '<style>' + window.R20_BASE_CSS + (t.css || '') + '</style>';
+}
+
+function getWrapperVars() {
+  var t = getActiveTheme();
+  var merged = Object.assign({}, t.defaults, themeOverrides);
+  return [
+    '--r20-bg:' + merged.bg,
+    '--r20-fg:' + merged.fg,
+    '--r20-font:' + merged.font,
+    '--r20-lh:' + merged.lh,
+    '--r20-fs:' + merged.fs + 'px',
+  ].join(';') + ';';
 }
 
 function initDesignPanel() {
@@ -38,14 +47,12 @@ function renderThemeCards() {
 
   Object.keys(window.THEMES || {}).forEach(function (key) {
     var theme = window.THEMES[key];
+    var d = theme.defaults || {};
     var card = document.createElement('div');
     card.className = 'theme-card' + (key === currentThemeKey ? ' selected' : '');
 
-    var previewStyle = [
-      'font-family:' + (theme.defaults && theme.defaults.fontFamily ? theme.defaults.fontFamily : 'system-ui'),
-      'background:' + (theme.defaults && theme.defaults.bgColor ? theme.defaults.bgColor : '#fff'),
-      'color:' + (theme.defaults && theme.defaults.textColor ? theme.defaults.textColor : '#111'),
-    ].join(';');
+    var previewStyle = 'font-family:' + (d.font || 'system-ui') +
+      ';background:' + (d.bg || '#fff') + ';color:' + (d.fg || '#111');
 
     card.innerHTML =
       '<div class="theme-card-name">' + escapeHTML(theme.name) + '</div>' +
@@ -68,24 +75,23 @@ function renderOverridePanel() {
   var container = document.getElementById('overridePanel');
   if (!container) return;
 
+  var fontOptions = [
+    { value: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif", label: '시스템 기본 (sans)' },
+    { value: "'Nanum Myeongjo', 'Noto Serif KR', Georgia, serif", label: '나눔명조 (serif)' },
+    { value: "'Malgun Gothic', sans-serif", label: '맑은 고딕' },
+    { value: 'ui-monospace, monospace', label: '고정폭 (monospace)' },
+  ];
+
   var fields = [
-    { key: 'bgColor', label: '배경색', type: 'color' },
-    { key: 'textColor', label: '텍스트 색', type: 'color' },
-    {
-      key: 'fontFamily', label: '폰트', type: 'select', options: [
-        { value: 'system-ui, -apple-system, sans-serif', label: '시스템 기본' },
-        { value: "'Nanum Myeongjo', 'Georgia', serif", label: '나눔명조 (한국어 serif)' },
-        { value: "'Georgia', serif", label: 'Georgia (serif)' },
-        { value: "ui-monospace, monospace", label: '고정폭 (monospace)' },
-        { value: "'Malgun Gothic', sans-serif", label: '맑은 고딕' },
-      ],
-    },
-    { key: 'lineHeight', label: '줄간격', type: 'range', min: 1.4, max: 2.6, step: 0.1 },
-    { key: 'fontSize', label: '글자 크기 (px)', type: 'range', min: 12, max: 22, step: 1 },
+    { key: 'bg', label: '배경색', type: 'color' },
+    { key: 'fg', label: '텍스트 색', type: 'color' },
+    { key: 'font', label: '폰트', type: 'select', options: fontOptions },
+    { key: 'lh', label: '줄간격', type: 'range', min: 1.4, max: 2.6, step: 0.1 },
+    { key: 'fs', label: '글자 크기 (px)', type: 'range', min: 12, max: 24, step: 1 },
   ];
 
   var html = '<div class="override-panel">' +
-    '<div style="font-size:13px;font-weight:bold;margin-bottom:10px">세부 조정</div>' +
+    '<div style="font-size:13px;font-weight:bold;margin-bottom:10px">세부 조정 (변환/분할 다시 누르면 적용)</div>' +
     '<div class="override-grid">';
 
   fields.forEach(function (f) {
@@ -98,7 +104,6 @@ function renderOverridePanel() {
   html += '</div>';
   container.innerHTML = html;
 
-  // Bind
   fields.forEach(function (f) {
     var el = document.getElementById('ov-' + f.key);
     if (!el) return;
@@ -128,7 +133,8 @@ function renderOverrideFieldHTML(field, val) {
             '<input type="color" id="ov-' + field.key + '" value="' + (val || '#ffffff') + '">';
   } else if (field.type === 'select') {
     var opts = field.options.map(function (o) {
-      return '<option value="' + escapeAttr(o.value) + '"' + (val === o.value ? ' selected' : '') + '>' + escapeHTML(o.label) + '</option>';
+      return '<option value="' + escapeAttr(o.value) + '"' + (val === o.value ? ' selected' : '') + '>' +
+        escapeHTML(o.label) + '</option>';
     }).join('');
     inner = '<label for="ov-' + field.key + '">' + escapeHTML(field.label) + '</label>' +
             '<select id="ov-' + field.key + '">' + opts + '</select>';
@@ -139,15 +145,4 @@ function renderOverrideFieldHTML(field, val) {
   }
 
   return '<div class="override-item">' + inner + '</div>';
-}
-
-function escapeHTML(str) {
-  return String(str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-function escapeAttr(str) {
-  return String(str || '').replace(/"/g, '&quot;');
 }
