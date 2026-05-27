@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>롤20 → 티스토리 백업기 v12</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <h1>롤20 → 티스토리 백업기 <small style="font-size:13px;font-weight:normal;color:#888">v12</small></h1>
+
+    <!-- Paste area -->
+    <div id="pad"
+         contenteditable="true"
+         spellcheck="false"
+         placeholder="여기에 R20 채팅 로그를 붙여넣으세요."></div>
+
+    <!-- Control bar -->
+    <div class="bar">
+      <label>스케일%&nbsp;<input id="scale" type="number" value="100" min="50" max="150" style="width:70px"></label>
+      <label id="chunkSizeLabel">분할 문자수&nbsp;<input id="chunkSize" type="number" value="60000" min="20000" max="200000"></label>
+      <label title="분할 없이 전체를 하나의 덩어리로 출력합니다">
+        <input type="checkbox" id="singleMode"> 통짜 출력
+      </label>
+      <label title="내 메시지에 붙은 연한 파란색 배경을 제거합니다">
+        <input type="checkbox" id="removeBlueBg"> 내 대사 배경 제거
+      </label>
+      <label title="모든 인라인 background-color 속성을 제거합니다">
+        <input type="checkbox" id="removeAllBg"> 모든 배경색 제거
+      </label>
+      <button class="btn" id="clearBtn">내용 지우기</button>
+      <button class="btn primary" id="convertBtn">변환 / 분할</button>
+    </div>
+
+    <!-- PDF + design bar -->
+    <div class="bar">
+      <button class="btn" id="pdfAllBtn">🖨 전체 PDF 저장</button>
+      <button class="btn" id="designToggleBtn">디자인 패널 열기 ▼</button>
+    </div>
+
+    <!-- Design / Theme panel -->
+    <div id="designPanel">
+      <div style="font-size:14px;font-weight:bold;margin-bottom:12px">레이아웃 테마</div>
+      <div id="themeCards" class="theme-cards"></div>
+      <div id="overridePanel"></div>
+    </div>
+
+    <div class="note">
+      💡 티스토리 HTML 편집 모드에 순서대로 붙여넣으세요.
+      테마 &lt;style&gt; 태그가 포함되므로 <strong>HTML 소스 편집기</strong> 사용을 권장합니다.
+    </div>
+
+    <!-- Output chunks -->
+    <div id="chunks"></div>
+    <div id="note" class="note"></div>
+  </div>
+
+  <!-- html2canvas (PNG 캡처용) -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+
+  <!-- Theme definitions (must load before design.js) -->
+  <script src="js/themes/r20-original.js"></script>
+  <script src="js/themes/book.js"></script>
+  <script src="js/themes/clean.js"></script>
+
+  <!-- Core modules -->
+  <script src="js/design.js"></script>
+  <script src="js/convert.js"></script>
+  <script src="js/download.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
