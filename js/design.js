@@ -2,28 +2,42 @@
 var currentThemeKey = 'r20-original';
 var themeOverrides = {}; // keys: bg, fg, font, lh, fs
 
+var RAW_KEY = 'raw';
+
+function isCurrentRawMode() {
+  return currentThemeKey === RAW_KEY;
+}
+
 function getActiveTheme() {
-  return (window.THEMES && window.THEMES[currentThemeKey]) || window.THEMES['r20-original'];
+  if (isCurrentRawMode()) {
+    /* Raw mode doesn't use a layout theme; fall back to first available for safety */
+    return (window.THEMES && window.THEMES['r20-original']) ||
+      (window.THEMES && window.THEMES[Object.keys(window.THEMES)[0]]) || {};
+  }
+  return (window.THEMES && window.THEMES[currentThemeKey]) ||
+    (window.THEMES && window.THEMES['r20-original']) || {};
 }
 
 function getThemeClass() {
-  return getActiveTheme().themeClass;
+  if (isCurrentRawMode()) return '';
+  return getActiveTheme().themeClass || '';
 }
 
 function buildStyleBlock() {
+  if (isCurrentRawMode()) return '';
   var t = getActiveTheme();
   return '<style>' + window.R20_BASE_CSS + (t.css || '') + '</style>';
 }
 
 function getWrapperVars() {
   var t = getActiveTheme();
-  var merged = Object.assign({}, t.defaults, themeOverrides);
+  var merged = Object.assign({}, t.defaults || {}, themeOverrides);
   return [
-    '--r20-bg:' + merged.bg,
-    '--r20-fg:' + merged.fg,
-    '--r20-font:' + merged.font,
-    '--r20-lh:' + merged.lh,
-    '--r20-fs:' + merged.fs + 'px',
+    '--r20-bg:' + (merged.bg || '#fff'),
+    '--r20-fg:' + (merged.fg || '#111'),
+    '--r20-font:' + (merged.font || 'system-ui,sans-serif'),
+    '--r20-lh:' + (merged.lh || '1.8'),
+    '--r20-fs:' + (merged.fs || '16') + 'px',
   ].join(';') + ';';
 }
 
@@ -45,6 +59,27 @@ function renderThemeCards() {
   if (!container) return;
   container.innerHTML = '';
 
+  /* ── Raw mode card (always first) ── */
+  var rawCard = document.createElement('div');
+  rawCard.className = 'theme-card' + (currentThemeKey === RAW_KEY ? ' selected' : '');
+  rawCard.innerHTML =
+    '<div class="theme-card-name">원본 모드</div>' +
+    '<div class="theme-card-desc">롤20 형식 그대로 유지</div>' +
+    '<div class="theme-card-preview" style="background:#f5f5f5;color:#333">' +
+    '<div style="display:flex;gap:4px;align-items:flex-start;margin-bottom:3px">' +
+    '<div style="width:14px;height:14px;border-radius:50%;background:#bbb;flex:0 0 14px;margin-top:1px"></div>' +
+    '<div><b style="font-size:10px">플레이어</b><br><span style="font-size:9px">대사 내용</span></div></div>' +
+    '<div style="font-size:9px;color:#888;background:#eee;padding:1px 4px;border-radius:2px">나레이션 설명</div>' +
+    '</div>';
+  rawCard.addEventListener('click', function () {
+    currentThemeKey = RAW_KEY;
+    themeOverrides = {};
+    renderThemeCards();
+    renderOverridePanel();
+  });
+  container.appendChild(rawCard);
+
+  /* ── Layout theme cards ── */
   Object.keys(window.THEMES || {}).forEach(function (key) {
     var theme = window.THEMES[key];
     var d = theme.defaults || {};
@@ -70,10 +105,20 @@ function renderThemeCards() {
 }
 
 function renderOverridePanel() {
-  var theme = getActiveTheme();
-  var defaults = (theme && theme.defaults) || {};
   var container = document.getElementById('overridePanel');
   if (!container) return;
+
+  /* Raw mode has no theme variables to override */
+  if (isCurrentRawMode()) {
+    container.innerHTML =
+      '<div style="font-size:13px;color:#888;padding:10px 0;border-top:1px solid #eee;margin-top:10px">' +
+      '원본 모드에서는 세부 조정이 적용되지 않습니다. 다른 테마를 선택하면 폰트·색상 등을 조정할 수 있어요.' +
+      '</div>';
+    return;
+  }
+
+  var theme = getActiveTheme();
+  var defaults = (theme && theme.defaults) || {};
 
   var fontOptions = [
     { value: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif", label: '시스템 기본 (sans)' },

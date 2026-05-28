@@ -7,17 +7,20 @@ window.R20_BASE_CSS = [
   '.r20-log{width:100%;margin:0 auto;max-width:760px;box-sizing:border-box;',
   'background:var(--r20-bg);color:var(--r20-fg);font-family:var(--r20-font);',
   'line-height:var(--r20-lh);font-size:var(--r20-fs);',
-  'word-break:break-word;overflow-wrap:anywhere}',
+  'word-break:break-word;overflow-wrap:break-word}',
   '.r20-log *{box-sizing:border-box}',
   /* preserve player-added link colors, just kill underlines */
   '.r20-log a{text-decoration:none}',
-  '.r20-turn{margin:0}',
-  '.r20-line{margin:0 0 .4em}',
+  /* position:relative makes turn the containing block for abs-positioned inner elements */
+  '.r20-turn{margin:0;position:relative}',
+  /* flow-root contains floats and establishes BFC to prevent overlap bleed */
+  '.r20-lines{display:flow-root}',
+  '.r20-line{margin:0 0 .4em;overflow-x:auto}',
   '.r20-line:last-child{margin-bottom:0}',
   '.r20-line img{max-width:100%;height:auto}',
   '.r20-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;display:block}',
   '.r20-roll{overflow-x:auto}',
-  '.r20-roll table{max-width:100%}',
+  '.r20-roll table{max-width:100%;border-collapse:collapse}',
   /* self-highlight: soft background tint on my own turns (no bar) */
   '.self-hl .r20-turn[data-self="true"]{background:var(--r20-self-bg,#eef3fc);',
   'border-radius:10px;padding:10px 14px;margin:4px 0}',
@@ -54,6 +57,18 @@ function extractLine(msg) {
         c.classList.contains('avatar') ||
         c.classList.contains('by'))) {
       c.remove();
+    }
+  });
+
+  /* Reset absolute/fixed positioning on remaining top-level children.
+     Absolute elements are taken out of flow and cause adjacent turns to overlap.
+     Changing to relative keeps them in flow while preserving their visual styling. */
+  Array.prototype.slice.call(clone.children).forEach(function (c) {
+    if (c.style) {
+      var pos = c.style.position;
+      if (pos === 'absolute' || pos === 'fixed') {
+        c.style.setProperty('position', 'relative');
+      }
     }
   });
 

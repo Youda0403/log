@@ -46,12 +46,6 @@ window.addEventListener('DOMContentLoaded', function () {
     lbl.style.opacity = e.target.checked ? '0.4' : '1';
   });
 
-  document.getElementById('rawMode').addEventListener('change', function (e) {
-    var themeRow = document.getElementById('designRow');
-    themeRow.style.opacity = e.target.checked ? '0.4' : '1';
-    themeRow.style.pointerEvents = e.target.checked ? 'none' : '';
-  });
-
   initDesignPanel();
 });
 
@@ -69,7 +63,7 @@ function doConvert() {
   var scale = Math.max(50, Math.min(150, parseInt(document.getElementById('scale').value || '100', 10)));
   var chunkSize = Math.max(20000, Math.min(200000, parseInt(document.getElementById('chunkSize').value || '60000', 10)));
   var singleMode = document.getElementById('singleMode').checked;
-  var rawMode = document.getElementById('rawMode').checked;
+  var rawMode = (typeof isCurrentRawMode === 'function') ? isCurrentRawMode() : false;
   var selfHL = document.getElementById('selfHL').checked;
 
   var wrapper = document.createElement('div');

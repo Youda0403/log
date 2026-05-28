@@ -22,13 +22,23 @@
     css: [
       '.r20-theme-clean.r20-log{max-width:720px}',
       '.r20-theme-clean .r20-avatar-wrap{display:none}',
-      '.r20-theme-clean .r20-turn{padding:12px 0;border-bottom:1px solid #eef0f2}',
+      /* display:flow-root contains floats/styled blocks, prevents overlap with next turn */
+      '.r20-theme-clean .r20-turn{display:flow-root;padding:12px 0;border-bottom:1px solid #eef0f2}',
       '.r20-theme-clean .r20-turn:last-child{border-bottom:none}',
       '.r20-theme-clean .r20-speaker{font-size:.72em;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9aa0a8;margin-bottom:5px}',
       /* Narration: centered grey italic, no bar */
       '.r20-theme-clean .r20-narration{border-bottom:none;text-align:center;',
       'margin:14px auto;max-width:90%}',
       '.r20-theme-clean .r20-narration .r20-line{color:#7b818a;font-style:italic}',
+      /* Roll result tables themed to match clean palette */
+      '.r20-theme-clean .r20-roll{margin:6px 0;border-radius:4px}',
+      '.r20-theme-clean .r20-roll table{width:100%;font-size:.85em}',
+      '.r20-theme-clean .r20-roll td,.r20-theme-clean .r20-roll th{',
+      'padding:4px 8px;border:1px solid #dde0e4;vertical-align:middle}',
+      '.r20-theme-clean .r20-roll tr:first-child td,',
+      '.r20-theme-clean .r20-roll thead td,',
+      '.r20-theme-clean .r20-roll thead th{',
+      'background:#9aa0a8!important;color:#fff!important;font-weight:700}',
     ].join(''),
   };
 })();

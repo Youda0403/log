@@ -25,10 +25,23 @@
       '.r20-theme-book .r20-turn:last-child{border-bottom:none}',
       '.r20-theme-book .r20-speaker{font-variant:small-caps;letter-spacing:.06em;font-weight:bold;color:#6b4a32;margin-bottom:3px;font-size:.9em}',
       '.r20-theme-book .r20-line{text-indent:1em}',
-      /* Narration: centered serif italic, scene-break feel (no bar, no indent) */
+      /* Prevent styled blocks (chapter headers, dividers) from auto-wrapping;
+         overflow-x:auto already on .r20-line from base CSS handles wide content */
+      '.r20-theme-book .r20-line > *{max-width:100%;white-space:normal}',
+      /* Narration: centered serif italic, scene-break feel */
       '.r20-theme-book .r20-narration{border-bottom:none;text-align:center;',
       'margin:18px auto;max-width:88%}',
       '.r20-theme-book .r20-narration .r20-line{font-style:italic;text-indent:0;color:#6b645c}',
+      /* Roll result tables themed to match book palette */
+      '.r20-theme-book .r20-roll{margin:8px 0;border-radius:4px;',
+      'border:1px solid rgba(107,74,50,.2)}',
+      '.r20-theme-book .r20-roll table{width:100%;font-family:inherit;font-size:.88em}',
+      '.r20-theme-book .r20-roll td,.r20-theme-book .r20-roll th{',
+      'padding:5px 10px;border:1px solid rgba(107,74,50,.15);vertical-align:middle}',
+      '.r20-theme-book .r20-roll tr:first-child td,',
+      '.r20-theme-book .r20-roll thead td,',
+      '.r20-theme-book .r20-roll thead th{',
+      'background:#6b4a32!important;color:#faf8f2!important;font-weight:bold}',
     ].join(''),
   };
 })();
