@@ -190,10 +190,16 @@ code.small {
     print-color-adjust: exact !important;
   }
 
-  /* Tool UI backgrounds must be transparent so the log's own background shows
-     against white paper — not a gray wrapper floating on white */
-  html, body { background: transparent !important; }
-  .wrap, .chunk-bd, .preview { background: transparent !important; }
+  /* Remove all wrapper constraints so log fills the full page width */
+  html, body { background: transparent !important; margin: 0 !important; padding: 0 !important; }
+  .wrap {
+    background: transparent !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .chunk-bd, .preview { background: transparent !important; }
 
   .wrap > h1,
   #pad,
@@ -203,7 +209,12 @@ code.small {
   .note,
   #note { display: none !important; }
 
-  .chunk { border: none !important; page-break-inside: avoid; }
+  .chunk {
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    page-break-inside: avoid;
+  }
   .chunk-bd { padding: 0 !important; }
   .preview {
     display: block !important;
@@ -213,7 +224,9 @@ code.small {
     margin: 0 !important;
     padding: 0 !important;
   }
+  /* Let log fill the full printable width */
+  .r20-log { max-width: none !important; width: 100% !important; }
   .chunk.print-hidden { display: none !important; }
 
-  @page { size: A4; margin: 18mm 20mm; }
+  @page { size: A4; margin: 10mm 14mm; }
 }

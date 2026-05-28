@@ -34,14 +34,13 @@
       /* Narration: compact, lighter gray italic */
       '.r20-theme-script .r20-narration{padding:4px 0}',
       '.r20-theme-script .r20-narration .r20-line{color:#aaa;font-style:italic}',
-      /* Roll card: centered, hairline rules instead of left bar (fits centered layout,
-         can't overflow because it's inline-block + max-width:100%) */
-      '.r20-theme-script .r20-rollcard{border-left:none;text-align:center;',
-      'padding:8px 4px;border-top:1px solid var(--r20-rc-line);',
-      'border-bottom:1px solid var(--r20-rc-line)}',
-      '.r20-theme-script .r20-rc-title{margin-bottom:5px}',
+      /* Roll card: soft rounded box — visually grouped, clearly belongs to the speaker */
+      '.r20-theme-script .r20-rollcard{border-left:none;display:inline-block;',
+      'background:rgba(45,41,38,.07);border-radius:8px;',
+      'padding:10px 20px;text-align:center;max-width:90%;margin:4px 0}',
+      '.r20-theme-script .r20-rc-title{margin-bottom:6px;color:#8a7c6e}',
       '.r20-theme-script .r20-rc-rows{display:inline-block;text-align:left}',
-      '.r20-theme-script .r20-rc-label{padding-right:12px}',
+      '.r20-theme-script .r20-rc-label{padding-right:14px}',
     ].join(''),
   };
 })();

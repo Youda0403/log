@@ -24,15 +24,14 @@
          get the full column and don't squish / line-break */
       '.r20-theme-book.r20-log{max-width:760px;padding:24px 8px}',
       '.r20-theme-book .r20-avatar-wrap{display:none}',
-      '.r20-theme-book .r20-turn{padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)}',
-      '.r20-theme-book .r20-turn:last-child{border-bottom:none}',
+      '.r20-theme-book .r20-turn{padding:10px 0}',
       '.r20-theme-book .r20-speaker{font-variant:small-caps;letter-spacing:.06em;',
       'font-weight:bold;color:#6b4a32;margin-bottom:2px;font-size:.9em}',
       '.r20-theme-book .r20-line{text-indent:1em}',
-      /* Narration: compact padding, centered italic, no divider */
-      '.r20-theme-book .r20-narration{padding:5px 0;border-bottom:none;',
+      /* Narration: centered italic with extra breathing room so it reads as distinct */
+      '.r20-theme-book .r20-narration{padding:12px 0;',
       'text-align:center;max-width:88%;margin-left:auto;margin-right:auto}',
-      '.r20-theme-book .r20-narration .r20-line{font-style:italic;text-indent:0;color:#6b645c}',
+      '.r20-theme-book .r20-narration .r20-line{font-style:italic;text-indent:0;color:#8a7c6e}',
       /* Roll card tweaks: serif-friendly accent already set via vars */
       '.r20-theme-book .r20-rc-title{font-variant:small-caps;text-transform:none;letter-spacing:.04em;font-size:.82em}',
     ].join(''),

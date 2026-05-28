@@ -7,7 +7,7 @@ window.R20_BASE_CSS = [
   '.r20-log{width:100%;margin:0 auto;max-width:760px;box-sizing:border-box;',
   'background:var(--r20-bg);color:var(--r20-fg);font-family:var(--r20-font);',
   'line-height:var(--r20-lh);font-size:var(--r20-fs);',
-  'word-break:break-word;overflow-wrap:break-word}',
+  'word-break:break-word;overflow-wrap:break-word;overflow:hidden}',
   '.r20-log *{box-sizing:border-box}',
   '.r20-log a{text-decoration:none}',
   /* position:relative → turn is the containing block for abs-positioned children */
@@ -150,8 +150,9 @@ function extractLine(msg) {
    */
   clone.querySelectorAll('[style]').forEach(function (e) {
     e.style.removeProperty('box-sizing');
-    /* clamp negative margins that pull blocks past the column edge (left-clipping) */
-    ['marginLeft', 'marginRight', 'marginTop', 'marginBottom'].forEach(function (p) {
+    /* Only clamp horizontal negative margins (left-clipping); vertical negative margins
+       are used intentionally for centering tricks (e.g. top:50%;margin-top:-Npx) */
+    ['marginLeft', 'marginRight'].forEach(function (p) {
       if (e.style[p] && parseFloat(e.style[p]) < 0) e.style[p] = '0';
     });
     /* Remove the attribute entirely if now empty */
