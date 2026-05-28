@@ -22,6 +22,7 @@
       fs: '15',
     },
     css: [
+      '.r20-theme-script{--r20-accent:#6b6b6b;--r20-rc-line:#e5e5e5;--r20-self-bg:#f5f0ff}',
       '.r20-theme-script.r20-log{max-width:640px}',
       '.r20-theme-script .r20-avatar-wrap{display:none}',
       /* All turns centered, consistent padding */
@@ -33,21 +34,14 @@
       /* Narration: compact, lighter gray italic */
       '.r20-theme-script .r20-narration{padding:4px 0}',
       '.r20-theme-script .r20-narration .r20-line{color:#aaa;font-style:italic}',
-      /* Self-highlight: soft lavender tint, works without extra spacing */
-      '.r20-theme-script .r20-self-hl{--r20-self-bg:#f5f0ff}',
-      /* Roll results: inline badge, strip Roll20 colors, neutral dark header */
-      '.r20-theme-script .r20-roll{display:inline-block;min-width:140px;',
-      'border:1px solid #e5e5e5;border-radius:6px;overflow:hidden;margin:4px 0}',
-      '.r20-theme-script .r20-roll *{background:transparent!important;color:inherit!important;',
-      'font-family:inherit!important;border-color:#e5e5e5!important}',
-      '.r20-theme-script .r20-roll table{border-collapse:collapse;font-size:.85em}',
-      '.r20-theme-script .r20-roll td,.r20-theme-script .r20-roll th{',
-      'padding:4px 10px;border:1px solid #e5e5e5!important;text-align:center;vertical-align:middle}',
-      '.r20-theme-script .r20-roll tr:first-child>td,',
-      '.r20-theme-script .r20-roll tr:first-child>th,',
-      '.r20-theme-script .r20-roll thead td,',
-      '.r20-theme-script .r20-roll thead th{',
-      'background:#4a4a4a!important;color:#fff!important;font-weight:600;letter-spacing:.04em}',
+      /* Roll card: centered, hairline rules instead of left bar (fits centered layout,
+         can't overflow because it's inline-block + max-width:100%) */
+      '.r20-theme-script .r20-rollcard{border-left:none;text-align:center;',
+      'padding:8px 4px;border-top:1px solid var(--r20-rc-line);',
+      'border-bottom:1px solid var(--r20-rc-line)}',
+      '.r20-theme-script .r20-rc-title{margin-bottom:5px}',
+      '.r20-theme-script .r20-rc-rows{display:inline-block;text-align:left}',
+      '.r20-theme-script .r20-rc-label{padding-right:12px}',
     ].join(''),
   };
 })();

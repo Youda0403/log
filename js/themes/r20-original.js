@@ -19,30 +19,16 @@
       fs: '16',
     },
     css: [
+      '.r20-theme-r20{--r20-accent:#475569;--r20-rc-line:rgba(0,0,0,.07)}',
       /* Named turns: flex row with avatar, consistent vertical padding, NO dividers */
       '.r20-theme-r20 .r20-turn{display:flex;gap:10px;align-items:flex-start;padding:10px 4px}',
       '.r20-theme-r20 .r20-avatar-wrap{flex:0 0 36px;padding-top:2px}',
-      /* flow-root on body contains floats within the flex item */
       '.r20-theme-r20 .r20-body{flex:1 1 auto;min-width:0;display:flow-root}',
       '.r20-theme-r20 .r20-speaker{font-weight:bold;font-size:.9em;margin-bottom:2px}',
       /* Narration: compact padding, centered italic */
       '.r20-theme-r20 .r20-narration{display:block;padding:4px 0}',
       '.r20-theme-r20 .r20-narration .r20-body{display:block;text-align:center}',
       '.r20-theme-r20 .r20-narration .r20-line{color:#888;font-style:italic}',
-      /* Roll results: strip Roll20 colors, dark header card */
-      '.r20-theme-r20 .r20-roll *{background:transparent!important;color:inherit!important;',
-      'font-family:inherit!important;border-color:#e2e8f0!important}',
-      '.r20-theme-r20 .r20-roll{border:1px solid #e2e8f0;border-radius:8px;',
-      'overflow:hidden;margin:6px 0}',
-      '.r20-theme-r20 .r20-roll table{width:100%;border-collapse:collapse;font-size:.88em}',
-      '.r20-theme-r20 .r20-roll td,.r20-theme-r20 .r20-roll th{',
-      'padding:5px 10px;border:1px solid #e2e8f0!important;',
-      'text-align:center;vertical-align:middle}',
-      '.r20-theme-r20 .r20-roll tr:first-child>td,',
-      '.r20-theme-r20 .r20-roll tr:first-child>th,',
-      '.r20-theme-r20 .r20-roll thead td,',
-      '.r20-theme-r20 .r20-roll thead th{',
-      'background:#1e293b!important;color:#f1f5f9!important;font-weight:600}',
     ].join(''),
   };
 })();

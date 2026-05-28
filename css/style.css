@@ -200,6 +200,7 @@ code.small {
   .bar,
   #designPanel,
   .chunk-hd,
+  .note,
   #note { display: none !important; }
 
   .chunk { border: none !important; page-break-inside: avoid; }
