@@ -3,22 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>롤20 → 티스토리 백업기 v12</title>
+<title>롤20 → 티스토리 백업기 v13</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&display=swap">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="wrap">
-    <h1>롤20 → 티스토리 백업기 <small style="font-size:13px;font-weight:normal;color:#888">v12</small></h1>
+    <h1>롤20 → 티스토리 백업기 <small style="font-size:13px;font-weight:normal;color:#888">v13</small></h1>
 
-    <!-- Paste area -->
     <div id="pad"
          contenteditable="true"
          spellcheck="false"
-         placeholder="여기에 R20 채팅 로그를 붙여넣으세요."></div>
+         placeholder="여기에 R20 채팅 로그를 붙여넣으세요.&#10;(새로고침해도 내용이 유지됩니다.)"></div>
 
-    <!-- Control bar -->
+    <!-- 옵션 바 -->
     <div class="bar">
       <label>스케일%&nbsp;<input id="scale" type="number" value="100" min="50" max="150" style="width:70px"></label>
       <label id="chunkSizeLabel">분할 문자수&nbsp;<input id="chunkSize" type="number" value="60000" min="20000" max="200000"></label>
@@ -29,41 +28,46 @@
       <button class="btn primary" id="convertBtn">변환 / 분할</button>
     </div>
 
-    <!-- PDF + design bar -->
+    <!-- 모드·스타일 바 -->
     <div class="bar">
+      <label title="Roll20 HTML 구조를 그대로 보존합니다 (테마 무시)">
+        <input type="checkbox" id="rawMode"> 원본 모드 (롤20 형식 유지)
+      </label>
+      <label title="내 대사 블록에 왼쪽 컬러 강조선을 표시합니다">
+        <input type="checkbox" id="selfHL" checked> 내 대사 강조
+      </label>
       <button class="btn" id="pdfAllBtn">🖨 전체 PDF 저장</button>
       <button class="btn" id="designToggleBtn">디자인 패널 열기 ▼</button>
     </div>
 
-    <!-- Design / Theme panel -->
+    <!-- 디자인 패널 -->
     <div id="designPanel">
-      <div style="font-size:14px;font-weight:bold;margin-bottom:12px">레이아웃 테마</div>
-      <div id="themeCards" class="theme-cards"></div>
-      <div id="overridePanel"></div>
+      <div id="designRow">
+        <div style="font-size:14px;font-weight:bold;margin-bottom:12px">
+          레이아웃 테마 <small style="font-weight:normal;color:#888;font-size:12px">원본 모드 체크 시 무시됨</small>
+        </div>
+        <div id="themeCards" class="theme-cards"></div>
+        <div id="overridePanel"></div>
+      </div>
     </div>
 
     <div class="note">
-      💡 롤20 채팅 로그를 복사해 위에 붙여넣고 <strong>변환/분할</strong>을 누르면, 선택한 테마 레이아웃으로 다시 조립됩니다.
-      출력물에 테마 &lt;style&gt; 태그가 포함되므로 티스토리의 <strong>HTML 모드(소스 편집기)</strong>에 붙여넣어 주세요.
+      💡 롤20 채팅 로그를 복사해 위에 붙여넣고 <strong>변환/분할</strong>을 누르세요.
+      테마 모드는 <strong>HTML 소스 편집기</strong>에, 원본 모드는 일반 붙여넣기에 적합합니다.
+      내용은 새로고침해도 자동 저장됩니다.
     </div>
 
-    <!-- Output chunks -->
     <div id="chunks"></div>
     <div id="note" class="note"></div>
   </div>
 
-  <!-- html2canvas (PNG 캡처용) -->
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-  <!-- Theme definitions -->
   <script src="js/themes/r20-original.js"></script>
   <script src="js/themes/book.js"></script>
   <script src="js/themes/clean.js"></script>
 
-  <!-- Core modules (convert defines shared helpers/base CSS first) -->
   <script src="js/convert.js"></script>
   <script src="js/design.js"></script>
   <script src="js/download.js"></script>
