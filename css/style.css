@@ -190,6 +190,11 @@ code.small {
     print-color-adjust: exact !important;
   }
 
+  /* Tool UI backgrounds must be transparent so the log's own background shows
+     against white paper — not a gray wrapper floating on white */
+  html, body { background: transparent !important; }
+  .wrap, .chunk-bd, .preview { background: transparent !important; }
+
   .wrap > h1,
   #pad,
   .bar,

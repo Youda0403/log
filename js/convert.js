@@ -9,21 +9,22 @@ window.R20_BASE_CSS = [
   'line-height:var(--r20-lh);font-size:var(--r20-fs);',
   'word-break:break-word;overflow-wrap:break-word}',
   '.r20-log *{box-sizing:border-box}',
-  /* preserve player-added link colors, just kill underlines */
   '.r20-log a{text-decoration:none}',
-  /* position:relative makes turn the containing block for abs-positioned inner elements */
+  /* position:relative → turn is the containing block for abs-positioned children */
   '.r20-turn{margin:0;position:relative}',
-  /* flow-root contains floats and establishes BFC to prevent overlap bleed */
+  /* flow-root → contains floats, prevents overlap bleed */
   '.r20-lines{display:flow-root}',
-  '.r20-line{margin:0 0 .4em;overflow-x:auto}',
+  /* .25em between paragraphs within a turn; overflow-x:auto for wide styled blocks */
+  '.r20-line{margin:0 0 .25em;overflow-x:auto}',
   '.r20-line:last-child{margin-bottom:0}',
   '.r20-line img{max-width:100%;height:auto}',
   '.r20-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;display:block}',
+  /* Roll results: scroll horizontally, clear trailing whitespace */
   '.r20-roll{overflow-x:auto}',
   '.r20-roll table{max-width:100%;border-collapse:collapse}',
-  /* self-highlight: soft background tint on my own turns (no bar) */
-  '.self-hl .r20-turn[data-self="true"]{background:var(--r20-self-bg,#eef3fc);',
-  'border-radius:10px;padding:10px 14px;margin:4px 0}',
+  '.r20-roll > :last-child{margin-bottom:0!important;padding-bottom:0!important}',
+  /* Self-highlight: background tint only — themes control all spacing/padding */
+  '.self-hl .r20-turn[data-self="true"]{background:var(--r20-self-bg,#eef3fc);border-radius:8px}',
 ].join('');
 
 function escapeHTML(str) {
@@ -205,7 +206,7 @@ function renderTurnsHTML(turns, scale) {
     }
     out += '<div class="r20-lines">';
     t.lines.forEach(function (l) {
-      if (!l.html) return;
+      if (!l.html || !l.html.trim()) return;
       if (l.isRoll) {
         out += '<div class="r20-line r20-roll"' + scaleStyle + '>' + l.html + '</div>';
       } else {

@@ -10,7 +10,7 @@
       '<div style="display:flex;gap:6px;align-items:flex-start">' +
       '<div style="width:18px;height:18px;border-radius:50%;background:#cbd5e1;flex:0 0 18px;margin-top:2px"></div>' +
       '<div><b style="font-size:11px">오틸리</b><br><span style="font-size:11px">(3초만에 받는다.) 여보세요?</span></div></div>' +
-      '<div style="font-size:11px;color:#555;margin-top:4px;padding-left:4px;font-style:italic">나레이션 텍스트입니다.</div>',
+      '<div style="font-size:10px;color:#888;margin-top:5px;font-style:italic">나레이션 텍스트입니다.</div>',
     defaults: {
       bg: '#ffffff',
       fg: '#333333',
@@ -19,24 +19,30 @@
       fs: '16',
     },
     css: [
-      /* Named speaker turn: flex row with avatar + thin divider */
-      '.r20-theme-r20 .r20-turn{display:flex;gap:10px;align-items:flex-start;',
-      'padding:10px 4px;border-top:1px solid #ebebeb}',
-      '.r20-theme-r20 .r20-turn:first-child{border-top:none}',
+      /* Named turns: flex row with avatar, consistent vertical padding, NO dividers */
+      '.r20-theme-r20 .r20-turn{display:flex;gap:10px;align-items:flex-start;padding:10px 4px}',
       '.r20-theme-r20 .r20-avatar-wrap{flex:0 0 36px;padding-top:2px}',
-      /* flow-root on body contains floats inside the flex item */
+      /* flow-root on body contains floats within the flex item */
       '.r20-theme-r20 .r20-body{flex:1 1 auto;min-width:0;display:flow-root}',
-      '.r20-theme-r20 .r20-speaker{font-weight:bold;font-size:.9em;margin-bottom:3px}',
-      /* Narration: centered italic, distinct from dialogue */
-      '.r20-theme-r20 .r20-narration{display:block;border-top:1px solid #ebebeb;padding:8px 0;',
-      'text-align:center;max-width:100%}',
-      '.r20-theme-r20 .r20-narration:first-child{border-top:none}',
-      '.r20-theme-r20 .r20-narration .r20-body{display:block}',
+      '.r20-theme-r20 .r20-speaker{font-weight:bold;font-size:.9em;margin-bottom:2px}',
+      /* Narration: compact padding, centered italic */
+      '.r20-theme-r20 .r20-narration{display:block;padding:4px 0}',
+      '.r20-theme-r20 .r20-narration .r20-body{display:block;text-align:center}',
       '.r20-theme-r20 .r20-narration .r20-line{color:#888;font-style:italic}',
-      /* Roll result tables */
-      '.r20-theme-r20 .r20-roll{border-radius:6px;overflow:hidden;margin:4px 0}',
-      '.r20-theme-r20 .r20-roll table{width:100%;font-size:.85em}',
-      '.r20-theme-r20 .r20-roll td,.r20-theme-r20 .r20-roll th{padding:3px 6px;vertical-align:middle}',
+      /* Roll results: strip Roll20 colors, dark header card */
+      '.r20-theme-r20 .r20-roll *{background:transparent!important;color:inherit!important;',
+      'font-family:inherit!important;border-color:#e2e8f0!important}',
+      '.r20-theme-r20 .r20-roll{border:1px solid #e2e8f0;border-radius:8px;',
+      'overflow:hidden;margin:6px 0}',
+      '.r20-theme-r20 .r20-roll table{width:100%;border-collapse:collapse;font-size:.88em}',
+      '.r20-theme-r20 .r20-roll td,.r20-theme-r20 .r20-roll th{',
+      'padding:5px 10px;border:1px solid #e2e8f0!important;',
+      'text-align:center;vertical-align:middle}',
+      '.r20-theme-r20 .r20-roll tr:first-child>td,',
+      '.r20-theme-r20 .r20-roll tr:first-child>th,',
+      '.r20-theme-r20 .r20-roll thead td,',
+      '.r20-theme-r20 .r20-roll thead th{',
+      'background:#1e293b!important;color:#f1f5f9!important;font-weight:600}',
     ].join(''),
   };
 })();
