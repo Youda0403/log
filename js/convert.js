@@ -18,9 +18,23 @@ window.R20_BASE_CSS = [
   '.r20-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;display:block}',
   '.r20-roll{overflow-x:auto}',
   '.r20-roll table{max-width:100%}',
-  /* self-highlight (class added to wrapper when option is on) */
-  '.self-hl .r20-turn[data-self="true"]{border-left:3px solid var(--r20-self-hl,#4f46e5);padding-left:8px}',
+  /* self-highlight: soft background tint on my own turns (no bar) */
+  '.self-hl .r20-turn[data-self="true"]{background:var(--r20-self-bg,#eef3fc);',
+  'border-radius:10px;padding:10px 14px;margin:4px 0}',
 ].join('');
+
+function escapeHTML(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function escapeAttr(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;');
+}
 
 function directChildByClass(el, cls) {
   var found = null;
@@ -106,6 +120,20 @@ function parseRoll20Log(root) {
     var byEl = directChildByClass(msg, 'by');
     var avatarEl = directChildByClass(msg, 'avatar');
     var hasHeader = !!(byEl || avatarEl);
+
+    /* /desc and /emote are standalone narration blocks — never merge them
+       into the previous speaker's turn, even when they carry no header */
+    var isDesc = msg.classList.contains('desc') || msg.classList.contains('emote');
+
+    if (isDesc && !byEl) {
+      current = {
+        speaker: '', avatarUrl: '', isSelf: false,
+        isNarration: true, lines: [],
+      };
+      turns.push(current);
+      current.lines.push(extractLine(msg));
+      return;
+    }
 
     if (hasHeader) {
       var rawName = byEl ? byEl.textContent : '';

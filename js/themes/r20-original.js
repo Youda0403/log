@@ -26,10 +26,10 @@
       '.r20-theme-r20 .r20-avatar-wrap{flex:0 0 36px;padding-top:2px}',
       '.r20-theme-r20 .r20-body{flex:1 1 auto;min-width:0}',
       '.r20-theme-r20 .r20-speaker{font-weight:bold;font-size:.9em;margin-bottom:3px}',
-      /* Narration: no avatar column, muted color, italic */
-      '.r20-theme-r20 .r20-narration{display:block;padding:6px 4px 6px 6px;',
-      'border-left:3px solid #e0e0e0}',
-      '.r20-theme-r20 .r20-narration .r20-line{color:#555;font-style:italic}',
+      /* Narration: centered italic block, distinct from left-aligned dialogue */
+      '.r20-theme-r20 .r20-narration{display:block;border:none;padding:0;',
+      'margin:14px auto;text-align:center;max-width:90%}',
+      '.r20-theme-r20 .r20-narration .r20-line{color:#888;font-style:italic}',
     ].join(''),
   };
 })();

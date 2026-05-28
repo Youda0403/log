@@ -25,8 +25,9 @@
       '.r20-theme-clean .r20-turn{padding:12px 0;border-bottom:1px solid #eef0f2}',
       '.r20-theme-clean .r20-turn:last-child{border-bottom:none}',
       '.r20-theme-clean .r20-speaker{font-size:.72em;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9aa0a8;margin-bottom:5px}',
-      /* Narration: grey italic, no top rule so it flows with content */
-      '.r20-theme-clean .r20-narration{border-bottom:none;padding:4px 0 4px 10px;border-left:2px solid #e5e7eb}',
+      /* Narration: centered grey italic, no bar */
+      '.r20-theme-clean .r20-narration{border-bottom:none;text-align:center;',
+      'margin:14px auto;max-width:90%}',
       '.r20-theme-clean .r20-narration .r20-line{color:#7b818a;font-style:italic}',
     ].join(''),
   };

@@ -25,9 +25,10 @@
       '.r20-theme-book .r20-turn:last-child{border-bottom:none}',
       '.r20-theme-book .r20-speaker{font-variant:small-caps;letter-spacing:.06em;font-weight:bold;color:#6b4a32;margin-bottom:3px;font-size:.9em}',
       '.r20-theme-book .r20-line{text-indent:1em}',
-      /* Narration: italic, no indent for speaker, more muted */
-      '.r20-theme-book .r20-narration .r20-line{font-style:italic;text-indent:1em;color:#5a5450;opacity:.9}',
-      '.r20-theme-book .r20-narration{padding:8px 0 8px 18px;border-left:2px solid #d0c8be}',
+      /* Narration: centered serif italic, scene-break feel (no bar, no indent) */
+      '.r20-theme-book .r20-narration{border-bottom:none;text-align:center;',
+      'margin:18px auto;max-width:88%}',
+      '.r20-theme-book .r20-narration .r20-line{font-style:italic;text-indent:0;color:#6b645c}',
     ].join(''),
   };
 })();
